@@ -20,65 +20,6 @@
 import {randomBytes} from 'node:crypto';
 import {parseSentryDSN} from '@fluxer/app_proxy/src/app_server/utils/SentryDSN';
 
-export const CSP_HOSTS = {
-	FRAME: [
-		'https://www.youtube.com/embed/',
-		'https://www.youtube.com/s/player/',
-		'https://hcaptcha.com',
-		'https://*.hcaptcha.com',
-		'https://challenges.cloudflare.com',
-	],
-	IMAGE: [
-		'https://*.fluxer.app',
-		'https://i.ytimg.com',
-		'https://*.youtube.com',
-		'https://fluxerusercontent.com',
-		'https://fluxerstatic.com',
-		'https://*.fluxer.media',
-		'https://fluxer.media',
-	],
-	MEDIA: [
-		'https://*.fluxer.app',
-		'https://*.youtube.com',
-		'https://fluxerusercontent.com',
-		'https://fluxerstatic.com',
-		'https://*.fluxer.media',
-		'https://fluxer.media',
-	],
-	SCRIPT: [
-		'https://*.fluxer.app',
-		'https://hcaptcha.com',
-		'https://*.hcaptcha.com',
-		'https://challenges.cloudflare.com',
-		'https://fluxerstatic.com',
-	],
-	STYLE: [
-		'https://*.fluxer.app',
-		'https://hcaptcha.com',
-		'https://*.hcaptcha.com',
-		'https://challenges.cloudflare.com',
-		'https://fluxerstatic.com',
-	],
-	FONT: ['https://*.fluxer.app', 'https://fluxerstatic.com'],
-	CONNECT: [
-		'https://*.fluxer.app',
-		'wss://*.fluxer.app',
-		'https://*.fluxer.media',
-		'wss://*.fluxer.media',
-		'https://hcaptcha.com',
-		'https://*.hcaptcha.com',
-		'https://challenges.cloudflare.com',
-		'https://*.fluxer.workers.dev',
-		'https://fluxerusercontent.com',
-		'https://fluxerstatic.com',
-		'https://fluxer.media',
-		'http://127.0.0.1:21863',
-		'http://127.0.0.1:21864',
-	],
-	WORKER: ['https://*.fluxer.app', 'https://fluxerstatic.com', 'blob:'],
-	MANIFEST: ['https://*.fluxer.app'],
-} as const;
-
 export interface CSPOptions {
 	defaultSrc?: ReadonlyArray<string>;
 	scriptSrc?: ReadonlyArray<string>;
@@ -93,15 +34,30 @@ export interface CSPOptions {
 	reportUri?: string;
 }
 
-export interface SentryCSPConfig {
+export interface CSPConfig {
 	sentryDsn: string;
+	csp: {
+		defaultSrc: string[];
+		scriptSrc: string[];
+		styleSrc: string[];
+		imgSrc: string[];
+		mediaSrc: string[];
+		fontSrc: string[];
+		connectSrc: string[];
+		frameSrc: string[];
+		workerSrc: string[];
+		manifestSrc: string[];
+		objectSrc: string[];
+		baseUri: string;
+		frameAncestors: string[];
+	}
 }
 
 export function generateNonce(): string {
 	return randomBytes(16).toString('hex');
 }
 
-export function buildSentryReportURI(config: SentryCSPConfig): string {
+export function buildSentryReportURI(config: CSPConfig): string {
 	const sentry = parseSentryDSN(config.sentryDsn);
 	if (!sentry) {
 		return '';
@@ -151,28 +107,28 @@ export function buildCSP(nonce: string, options?: CSPOptions): string {
 	return directives.join('; ');
 }
 
-export function buildFluxerCSPOptions(config: SentryCSPConfig): CSPOptions {
+export function buildFluxerCSPOptions(config: CSPConfig): CSPOptions {
 	const reportURI = buildSentryReportURI(config);
 	const sentry = parseSentryDSN(config.sentryDsn);
-	const connectSrc: Array<string> = [...CSP_HOSTS.CONNECT];
+	const connectSrc: Array<string> = [...config.csp.connectSrc];
 	if (sentry) {
 		connectSrc.push(sentry.targetUrl);
 	}
 
 	return {
-		scriptSrc: [...CSP_HOSTS.SCRIPT],
-		styleSrc: [...CSP_HOSTS.STYLE],
-		imgSrc: [...CSP_HOSTS.IMAGE],
-		mediaSrc: [...CSP_HOSTS.MEDIA],
-		fontSrc: [...CSP_HOSTS.FONT],
+		scriptSrc: [...config.csp.scriptSrc],
+		styleSrc: [...config.csp.styleSrc],
+		imgSrc: [...config.csp.imgSrc],
+		mediaSrc: [...config.csp.mediaSrc],
+		fontSrc: [...config.csp.fontSrc],
 		connectSrc: Array.from(new Set(connectSrc)),
-		frameSrc: [...CSP_HOSTS.FRAME],
-		workerSrc: [...CSP_HOSTS.WORKER],
-		manifestSrc: [...CSP_HOSTS.MANIFEST],
+		frameSrc: [...config.csp.frameSrc],
+		workerSrc: [...config.csp.workerSrc],
+		manifestSrc: [...config.csp.manifestSrc],
 		reportUri: reportURI || undefined,
 	};
 }
 
-export function buildFluxerCSP(nonce: string, config: SentryCSPConfig): string {
+export function buildFluxerCSP(nonce: string, config: CSPConfig): string {
 	return buildCSP(nonce, buildFluxerCSPOptions(config));
 }

@@ -277,6 +277,7 @@ function createAppServerInitializer(context: ServiceInitializationContext): Serv
 
 	const publicUrlHost = new URL(requireValue(config.endpoints.app, 'endpoints.app')).origin;
 	const mediaUrlHost = new URL(requireValue(config.endpoints.media, 'endpoints.media')).origin;
+	const cspCfg = config.services.server.csp.directives;
 
 	const appServer = createAppServer({
 		staticDir,
@@ -287,14 +288,10 @@ function createAppServerInitializer(context: ServiceInitializationContext): Serv
 			tracing: telemetry.tracing,
 		},
 		cspDirectives: {
-			defaultSrc: ["'self'"],
-			scriptSrc: ["'self'", "'unsafe-inline'"],
-			styleSrc: ["'self'", "'unsafe-inline'"],
-			imgSrc: ["'self'", 'data:', 'blob:', publicUrlHost, mediaUrlHost],
-			connectSrc: ["'self'", 'wss:', 'ws:', publicUrlHost],
-			fontSrc: ["'self'"],
-			mediaSrc: ["'self'", 'blob:', mediaUrlHost],
-			frameSrc: ["'none'"],
+			...cspCfg,
+			imgSrc: [...cspCfg.imgSrc, publicUrlHost, mediaUrlHost],
+			connectSrc: [...cspCfg.connectSrc, publicUrlHost],
+			mediaSrc: [...cspCfg.mediaSrc, mediaUrlHost],
 		},
 	});
 

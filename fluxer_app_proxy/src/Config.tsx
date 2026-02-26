@@ -22,6 +22,7 @@ import {extractBaseServiceConfig} from '@fluxer/config/src/ServiceConfigSlices';
 
 const master = await loadConfig();
 const appProxy = master.services.app_proxy;
+const csp = master.csp;
 
 if (!appProxy) {
 	throw new Error('Application proxy requires `services.app_proxy` configuration');
@@ -33,6 +34,7 @@ export const Config = {
 	static_cdn_endpoint: appProxy.static_cdn_endpoint,
 	sentry_dsn: master.app_public.sentry_dsn,
 	assets_dir: appProxy.assets_dir,
+	csp_directives: csp.directives,
 };
 
 export type Config = typeof Config;

@@ -31,7 +31,7 @@ const telemetry = createServiceTelemetry({
 });
 
 async function main(): Promise<void> {
-	const cspDirectives = buildFluxerCSPOptions({sentryDsn: Config.sentry_dsn});
+	const cspDirectives = buildFluxerCSPOptions({sentryDsn: Config.sentry_dsn, csp: Config.csp_directives});
 
 	const {app, shutdown} = await createAppProxyApp({
 		config: Config,

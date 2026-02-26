@@ -17,6 +17,22 @@
 			"static_dir": {
 				"type": "string",
 				"description": "Path to static assets directory for the web app. Required in production."
+			},
+			"csp": {
+				"description": "CSP (Content Security Policy) configuration to prevent cross-site scripting (XSS) and other attacks.",
+				"$ref": "#/$defs/csp",
+				"default": {
+					"directives": {
+						"defaultSrc": ["'self'"],
+						"scriptSrc": ["'self'", "'unsafe-inline'"],
+						"styleSrc": ["'self'", "'unsafe-inline'"],
+						"imgSrc": ["'self'", "data:", "blob:"],
+						"connectSrc": ["'self'", "wss:", "ws:"],
+						"fontSrc": ["'self'"],
+						"mediaSrc": ["'self'", "blob:"],
+						"frameSrc": ["'none'"]
+					}
+				}
 			}
 		}
 	}

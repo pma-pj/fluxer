@@ -18,6 +18,11 @@
 				"type": "string",
 				"description": "Filesystem directory containing static assets.",
 				"default": "./assets"
+			},
+			"csp": {
+				"description": "CSP (Content Security Policy) configuration to prevent cross-site scripting (XSS) and other attacks.",
+				"$ref": "#/$defs/csp",
+				"default": {}
 			}
 		}
 	}

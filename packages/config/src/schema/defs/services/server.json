@@ -25,10 +25,10 @@
 					"directives": {
 						"defaultSrc": ["'self'"],
 						"scriptSrc": ["'self'", "'unsafe-inline'"],
-						"styleSrc": ["'self'", "'unsafe-inline'"],
-						"imgSrc": ["'self'", "data:", "blob:"],
+						"styleSrc": ["'self'", "'unsafe-inline'", "https://fluxerstatic.com"],
+						"imgSrc": ["'self'", "data:", "blob:", "https://fluxerstatic.com"],
 						"connectSrc": ["'self'", "wss:", "ws:"],
-						"fontSrc": ["'self'"],
+						"fontSrc": ["'self'", "https://fluxerstatic.com"],
 						"mediaSrc": ["'self'", "blob:"],
 						"frameSrc": ["'none'"]
 					}

@@ -148,6 +148,11 @@
 			"$ref": "#/$defs/csam",
 			"default": {}
 		},
+		"csp": {
+			"description": "CSP (Content Security Policy) configuration to prevent cross-site scripting (XSS) and other attacks.",
+			"$ref": "#/$defs/csp",
+			"default": {}
+		},
 		"dev": {
 			"description": "Development-only overrides and flags. These should generally be disabled in production.",
 			"$ref": "#/$defs/dev",
@@ -830,6 +835,198 @@
 							"description": "TTL for consumer lock (seconds)."
 						}
 					}
+				}
+			}
+		},
+		"csp": {
+			"type": "object",
+			"description": "CSP configuration.",
+			"properties": {
+				"directives": {
+					"type": "object",
+					"properties": {
+						"defaultSrc": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							},
+							"default": [
+								"'self'"
+							],
+							"description": "Fallback directive for other fetch directives (default sources)."
+						},
+						"scriptSrc": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							},
+							"default": [
+								"'self'",
+								"'nonce-${nonce}'",
+								"'wasm-unsafe-eval'",
+								"https://*.fluxer.app",
+								"https://hcaptcha.com",
+								"https://*.hcaptcha.com",
+								"https://challenges.cloudflare.com",
+								"https://fluxerstatic.com"
+							],
+							"description": "Controls valid sources for JavaScript."
+						},
+						"styleSrc": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							},
+							"default": [
+								"'self'",
+								"'unsafe-inline'",
+								"https://*.fluxer.app",
+								"https://hcaptcha.com",
+								"https://*.hcaptcha.com",
+								"https://challenges.cloudflare.com",
+								"https://fluxerstatic.com"
+							],
+							"description": "Controls valid sources for stylesheets (CSS)."
+						},
+						"imgSrc": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							},
+							"default": [
+								"'self'",
+								"blob:",
+								"data:",
+								"https://*.fluxer.app",
+								"https://i.ytimg.com",
+								"https://*.youtube.com",
+								"https://fluxerusercontent.com",
+								"https://fluxerstatic.com",
+								"https://*.fluxer.media",
+								"https://fluxer.media"
+							],
+							"description": "Controls valid sources for images."
+						},
+						"mediaSrc": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							},
+							"default": [
+								"'self'",
+								"blob:",
+								"https://*.fluxer.app",
+								"https://*.youtube.com",
+								"https://fluxerusercontent.com",
+								"https://fluxerstatic.com",
+								"https://*.fluxer.media",
+								"https://fluxer.media"
+							],
+							"description": "Controls valid sources for audio and video."
+						},
+						"fontSrc": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							},
+							"default": [
+								"'self'",
+								"data:",
+								"https://*.fluxer.app",
+								"https://fluxerstatic.com"
+							],
+							"description": "Controls valid sources for fonts."
+						},
+						"connectSrc": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							},
+							"default": [
+								"'self'",
+								"data:",
+								"https://*.fluxer.app",
+								"wss://*.fluxer.app",
+								"https://*.fluxer.media",
+								"wss://*.fluxer.media",
+								"https://hcaptcha.com",
+								"https://*.hcaptcha.com",
+								"https://challenges.cloudflare.com",
+								"https://*.fluxer.workers.dev",
+								"https://fluxerusercontent.com",
+								"https://fluxerstatic.com",
+								"https://fluxer.media",
+								"http://127.0.0.1:21863",
+								"http://127.0.0.1:21864"
+							],
+							"description": "Controls valid targets for fetch/XHR/WebSocket/EventSource connections."
+						},
+						"frameSrc": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							},
+							"default": [
+								"'self'",
+								"https://www.youtube.com/embed/",
+								"https://www.youtube.com/s/player/",
+								"https://hcaptcha.com",
+								"https://*.hcaptcha.com",
+								"https://challenges.cloudflare.com"
+							],
+							"description": "Controls valid sources for nested browsing contexts (e.g., iframes)."
+						},
+						"workerSrc": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							},
+							"default": [
+								"'self'",
+								"blob:",
+								"https://*.fluxer.app",
+								"https://fluxerstatic.com"
+							],
+							"description": "Controls valid sources for Worker, SharedWorker, and ServiceWorker scripts."
+						},
+						"manifestSrc": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							},
+							"default": [
+								"'self'",
+								"https://*.fluxer.app"
+							],
+							"description": "Controls valid sources for web app manifests."
+						},
+						"objectSrc": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							},
+							"default": [
+								"'self'"
+							],
+							"description": "Controls valid sources for plugins/embedded objects (e.g., <object>, <embed>, <applet>)."
+						},
+						"baseUri": {
+							"type": "string",
+							"default": "self",
+							"description": "Restricts URLs which can be used as the document base"
+						},
+						"frameAncestors": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							},
+							"default": [
+								"'self'"
+							],
+							"description": "Controls which parents may embed the page (ancestors of the document in <frame>/<iframe>/<object>/<embed>)."
+						}
+					},
+					"description": "CSP directives."
 				}
 			}
 		},
